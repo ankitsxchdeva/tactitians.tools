@@ -72,7 +72,7 @@ function sortTable(columnIndex) {
 
 
 // Fetch the companion data from the API and populate the table
-fetch('http://127.0.0.1:5000/api/companions')
+fetch('https://tactitions-tools.onrender.com/api/companions')
     .then(response => response.json())
     .then(data => {
         const tableBody = document.querySelector('#tactician-table tbody');

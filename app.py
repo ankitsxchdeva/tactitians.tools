@@ -1,9 +1,13 @@
 from flask import Flask, jsonify, render_template
+from flask_cors import CORS
 import psycopg2
 from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 # Load environment variables from the .env file
 load_dotenv()
