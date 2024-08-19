@@ -13,24 +13,45 @@ function updateTable() {
         .catch(error => console.error('Error fetching data:', error));
 }
 
-// Function to populate the table with data
-function populateTable(tacticians) {
-    const tableBody = document.querySelector('#tactician-table tbody');
-    tableBody.innerHTML = '';
+// Fetch the companion statistics data from the API and populate the table
+fetch('https://tactitions-tools.onrender.com/api/companion_stats')
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.querySelector('#tactician-table tbody');
+        tableBody.innerHTML = '';
 
-    tacticians.forEach(tactician => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${tactician.name}</td>
-            <td>${tactician.gamesPlayed}</td>
-            <td>${tactician.averagePlace}</td>
-            <td>${tactician.top4Percentage}</td>
-            <td>${tactician.winPercentage}</td>
-        `;
-        tableBody.appendChild(row);
-    });
-}
+        data.forEach(companion => {
+            const row = document.createElement('tr');
 
+            // Companion name cell
+            const nameCell = document.createElement('td');
+            nameCell.textContent = companion.companion_name;
+
+            // Games played cell
+            const gamesPlayedCell = document.createElement('td');
+            gamesPlayedCell.textContent = companion.games_played;
+
+            // Top 4 percentage cell
+            const top4Cell = document.createElement('td');
+            top4Cell.textContent = companion.top_4_percentage.toFixed(2) + '%';
+
+            // Win percentage cell
+            const winPercentageCell = document.createElement('td');
+            winPercentageCell.textContent = companion.win_percentage.toFixed(2) + '%';
+
+            // Append all cells to the row
+            row.appendChild(nameCell);
+            row.appendChild(gamesPlayedCell);
+            row.appendChild(top4Cell);
+            row.appendChild(winPercentageCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching companion statistics:', error));
+
+    
 // Function to update the metrics at the top of the page
 function updateMetrics(metrics) {
     document.getElementById('games-analyzed').innerText = `Games Analyzed: ${metrics.gamesAnalyzed}`;

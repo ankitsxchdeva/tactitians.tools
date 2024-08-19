@@ -44,5 +44,33 @@ def get_companions():
 
     return jsonify(companions_list)
 
+# API endpoint to serve companion statistics
+@app.route('/api/companion_stats', methods=['GET'])
+def get_companion_stats():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    query = """
+    SELECT companion_name, games_played, top_4_percentage, win_percentage
+    FROM companion_statistics
+    ORDER BY top_4_percentage DESC;
+    """
+
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    result = [
+        {
+            'companion_name': row[0],
+            'games_played': row[1],
+            'top_4_percentage': row[2],
+            'win_percentage': row[3]
+        } for row in rows
+    ]
+
+    return jsonify(result)
+
 if __name__ == '__main__':
     app.run(debug=True)

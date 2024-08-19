@@ -111,3 +111,19 @@ tbody tr:last-child td {
         align-items: flex-start;
     }
 }
+
+/* Base style for Tactician images in the table */
+td img {
+    transition: transform 0.3s ease; /* Smooth transition for scaling */
+    max-width: 50px; /* Limit the width to 50px */
+    height: auto; /* Adjust the height automatically to maintain aspect ratio */
+    display: block;
+    margin: 0 auto;
+}
+
+/* Hover effect to enlarge the image while maintaining aspect ratio */
+td:hover img {
+    max-width: 100px; /* Increase the width on hover */
+    height: auto; /* Adjust height to maintain aspect ratio */
+    transform: scale(1.5); /* Optional: Smoothly scale the image slightly */
+}
