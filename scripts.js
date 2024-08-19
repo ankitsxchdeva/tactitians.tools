@@ -70,6 +70,57 @@ function sortTable(columnIndex) {
     sortedRows.forEach(row => table.tBodies[0].appendChild(row));
 }
 
+
+// Fetch the companion data from the API and populate the table
+fetch('http://127.0.0.1:5000/api/companions')
+    .then(response => response.json())
+    .then(data => {
+        const tableBody = document.querySelector('#tactician-table tbody');
+        tableBody.innerHTML = '';
+
+        data.forEach(companion => {
+            // Create a new row for each Tactician
+            const row = document.createElement('tr');
+
+            // Tactician name cell
+            const nameCell = document.createElement('td');
+            nameCell.textContent = companion.name;
+
+            // Tactician image cell
+            const imageCell = document.createElement('td');
+            const img = document.createElement('img');
+            img.src = companion.icon_path;
+            img.alt = companion.name;
+            img.style.width = '50px'; // Adjust the size as needed
+            imageCell.appendChild(img);
+
+            // Add additional cells for the rest of the data (mock data in this case)
+            const gamesPlayedCell = document.createElement('td');
+            gamesPlayedCell.textContent = companion.gamesPlayed || 'N/A'; // Replace 'N/A' with actual data
+
+            const avgPlaceCell = document.createElement('td');
+            avgPlaceCell.textContent = companion.averagePlace || 'N/A';
+
+            const top4Cell = document.createElement('td');
+            top4Cell.textContent = companion.top4Percentage || 'N/A';
+
+            const winPercentageCell = document.createElement('td');
+            winPercentageCell.textContent = companion.winPercentage || 'N/A';
+
+            // Append all cells to the row
+            row.appendChild(nameCell);
+            row.appendChild(imageCell);
+            row.appendChild(gamesPlayedCell);
+            row.appendChild(avgPlaceCell);
+            row.appendChild(top4Cell);
+            row.appendChild(winPercentageCell);
+
+            // Append the row to the table body
+            tableBody.appendChild(row);
+        });
+    })
+    .catch(error => console.error('Error fetching companions:', error));
+
 // Attach event listeners for filtering and sorting
 document.getElementById('region').addEventListener('change', updateTable);
 document.getElementById('rank').addEventListener('change', updateTable);
