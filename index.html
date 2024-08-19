@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFT Tactician Winrate Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="filter-bar">
+        <label for="region">Region:</label>
+        <select id="region">
+            <option value="all">All</option>
+            <option value="na">NA</option>
+            <option value="eu">EU</option>
+            <!-- Add more regions as needed -->
+        </select>
+
+        <label for="rank">Rank:</label>
+        <select id="rank">
+            <option value="all">All</option>
+            <option value="bronze">Bronze+</option>
+            <option value="silver">Silver+</option>
+            <option value="diamond">Diamond+</option>
+            <!-- Add more ranks as needed -->
+        </select>
+    </div>
+
+    <table id="tactician-table">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Tactician</th>
+                <th onclick="sortTable(1)">Games Played</th>
+                <th onclick="sortTable(2)">Average Place</th>
+                <th onclick="sortTable(3)">Top 4%</th>
+                <th onclick="sortTable(4)">Win %</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table data will be populated here -->
+        </tbody>
+    </table>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
