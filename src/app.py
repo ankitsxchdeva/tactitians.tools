@@ -1,111 +1,76 @@
-// Helper function to fetch and display companion data (names and images)
-function fetchAndDisplayCompanions() {
-    fetch('https://tactitions-tools.onrender.com/api/companions')
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.querySelector('#tactician-table tbody');
-            tableBody.innerHTML = '';
+from flask import Flask, jsonify, render_template
+from flask_cors import CORS
+import psycopg2
+from dotenv import load_dotenv
+import os
 
-            data.forEach(companion => {
-                const row = document.createElement('tr');
+app = Flask(__name__)
 
-                // Companion name cell
-                const nameCell = document.createElement('td');
-                nameCell.textContent = companion.name;
+# Enable CORS for all routes
+CORS(app)
 
-                // Companion image cell
-                const imageCell = document.createElement('td');
-                const img = document.createElement('img');
-                img.src = companion.icon_path;
-                img.alt = companion.name;
-                img.style.width = '50px'; // Adjust the size as needed
-                imageCell.appendChild(img);
+# Load environment variables from the .env file
+load_dotenv()
 
-                // Append these cells to the row
-                row.appendChild(nameCell);
-                row.appendChild(imageCell);
-
-                // Placeholder cells for statistics (will be filled by fetchAndDisplayCompanionStats)
-                const gamesPlayedCell = document.createElement('td');
-                const avgPlaceCell = document.createElement('td');
-                const top4Cell = document.createElement('td');
-                const winPercentageCell = document.createElement('td');
-
-                row.appendChild(gamesPlayedCell);
-                row.appendChild(avgPlaceCell);
-                row.appendChild(top4Cell);
-                row.appendChild(winPercentageCell);
-
-                // Append the row to the table body
-                tableBody.appendChild(row);
-            });
-        })
-        .catch(error => console.error('Error fetching companions:', error));
+# Database configuration
+db_config = {
+    'dbname': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'host': os.getenv('DB_HOST'),
+    'port': os.getenv('DB_PORT', 5432)
 }
 
-// Helper function to fetch and display companion statistics
-function fetchAndDisplayCompanionStats() {
-    fetch('https://tactitions-tools.onrender.com/api/companion_stats')
-        .then(response => response.json())
-        .then(data => {
-            const tableBody = document.querySelector('#tactician-table tbody');
+def get_db_connection():
+    return psycopg2.connect(**db_config)
 
-            data.forEach(companionStat => {
-                // Find the corresponding row by companion name
-                const row = Array.from(tableBody.rows).find(row => 
-                    row.cells[0].textContent === companionStat.companion_name);
+# Endpoint to serve the HTML page
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-                if (row) {
-                    // Fill in the statistics cells
-                    row.cells[2].textContent = companionStat.games_played;
-                    row.cells[3].textContent = companionStat.top_4_percentage.toFixed(2) + '%';
-                    row.cells[4].textContent = companionStat.win_percentage.toFixed(2) + '%';
-                }
-            });
-        })
-        .catch(error => console.error('Error fetching companion statistics:', error));
-}
+# API endpoint to serve the Tactician data
+@app.route('/api/companions', methods=['GET'])
+def get_companions():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, icon_path FROM companions")
+    companions = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
-// Function to sort the table based on a column index
-function sortTable(columnIndex) {
-    const table = document.getElementById("tactician-table");
-    const rows = Array.from(table.rows).slice(1); // Exclude the header row
-    let sortedRows;
+    # Convert the fetched data to a list of dictionaries
+    companions_list = [{"name": row[0], "icon_path": row[1]} for row in companions]
 
-    // Determine if the column is numeric or text-based
-    const isNumericColumn = !isNaN(rows[0].cells[columnIndex].innerText);
+    return jsonify(companions_list)
 
-    sortedRows = rows.sort((a, b) => {
-        const aText = a.cells[columnIndex].innerText;
-        const bText = b.cells[columnIndex].innerText;
+# API endpoint to serve companion statistics
+@app.route('/api/companion_stats', methods=['GET'])
+def get_companion_stats():
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-        if (isNumericColumn) {
-            return parseFloat(aText) - parseFloat(bText);
-        } else {
-            return aText.localeCompare(bText);
-        }
-    });
+    query = """
+    SELECT companion_name, games_played, top_4_percentage, win_percentage
+    FROM companion_statistics
+    ORDER BY top_4_percentage DESC;
+    """
 
-    // Toggle sorting order if already sorted in ascending order
-    if (table.getAttribute('data-sorted') === columnIndex.toString()) {
-        sortedRows.reverse();
-        table.removeAttribute('data-sorted');
-    } else {
-        table.setAttribute('data-sorted', columnIndex.toString());
-    }
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
 
-    // Remove existing rows and append sorted rows
-    table.tBodies[0].innerHTML = '';
-    sortedRows.forEach(row => table.tBodies[0].appendChild(row));
-}
+    result = [
+        {
+            'companion_name': row[0],
+            'games_played': row[1],
+            'top_4_percentage': row[2],
+            'win_percentage': row[3]
+        } for row in rows
+    ]
 
-// Initialize table on page load
-document.addEventListener('DOMContentLoaded', () => {
-    fetchAndDisplayCompanions();
-    fetchAndDisplayCompanionStats();
-});
+    return jsonify(result)
 
-// Attach click event listeners to table headers for sorting
-document.querySelectorAll('#tactician-table th').forEach((header, index) => {
-    header.addEventListener('click', () => sortTable(index));
-});
+if __name__ == '__main__':
+    app.run(debug=True)
