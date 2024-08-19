@@ -1,0 +1,13 @@
+# .gitignore
+
+# Ignore the virtual environment directory
+venv/
+
+# Ignore the .env file
+.env
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+.DS_Store

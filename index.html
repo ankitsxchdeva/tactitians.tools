@@ -7,22 +7,20 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="metrics-bar">
+        <span id="games-analyzed">Games Analyzed: 0</span>
+        <span id="last-updated">Last Updated: Never</span>
+    </div>
+
     <div class="filter-bar">
         <label for="region">Region:</label>
-        <select id="region">
-            <option value="all">All</option>
-            <option value="na">NA</option>
-            <option value="eu">EU</option>
-            <!-- Add more regions as needed -->
+        <select id="region" disabled>
+            <option value="na" selected>NA</option>
         </select>
 
         <label for="rank">Rank:</label>
-        <select id="rank">
-            <option value="all">All</option>
-            <option value="bronze">Bronze+</option>
-            <option value="silver">Silver+</option>
-            <option value="diamond">Diamond+</option>
-            <!-- Add more ranks as needed -->
+        <select id="rank" disabled>
+            <option value="all" selected>All</option>
         </select>
     </div>
 

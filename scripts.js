@@ -7,17 +7,18 @@ function updateTable() {
     fetch(`/api/tacticians?region=${region}&rank=${rank}`)
         .then(response => response.json())
         .then(data => {
-            populateTable(data);
+            populateTable(data.tacticians);
+            updateMetrics(data.metrics);
         })
         .catch(error => console.error('Error fetching data:', error));
 }
 
 // Function to populate the table with data
-function populateTable(data) {
+function populateTable(tacticians) {
     const tableBody = document.querySelector('#tactician-table tbody');
     tableBody.innerHTML = '';
 
-    data.forEach(tactician => {
+    tacticians.forEach(tactician => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${tactician.name}</td>
@@ -28,6 +29,12 @@ function populateTable(data) {
         `;
         tableBody.appendChild(row);
     });
+}
+
+// Function to update the metrics at the top of the page
+function updateMetrics(metrics) {
+    document.getElementById('games-analyzed').innerText = `Games Analyzed: ${metrics.gamesAnalyzed}`;
+    document.getElementById('last-updated').innerText = `Last Updated: ${metrics.lastUpdated}`;
 }
 
 // Function to sort the table based on a column index
