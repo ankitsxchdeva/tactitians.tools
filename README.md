@@ -23,16 +23,18 @@ src/
 └── schema.md - database schema layout
 ```
 **Root Directory**
-**.gitignore*
-**CNAME**
-**index.html** - homepage
-**privacy_policy.html**
-**README.md** - this page
-**riot.txt**
-**scripts.js** - javascript
-**styles.css** - stylesheet
-**terms_of_service.html**
-**terms_of_service.css** - stylesheet for terms_of_service.html and privacy_policy.html
+```
+.gitignore
+CNAME
+index.html - homepage
+privacy_policy.html
+README.md - this page
+riot.txt
+scripts.js - javascript
+styles.css - stylesheet
+terms_of_service.html
+terms_of_service.css - stylesheet for terms_of_service.html and privacy_policy.html
+```
 
 ## Contribution
 
