@@ -112,6 +112,26 @@ tbody tr:last-child td {
     }
 }
 
+.sort-arrow {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-left: 5px;
+}
+
+.sort-arrow.asc::before {
+    content: '↑'; /* Unicode character for upward arrow */
+}
+
+.sort-arrow.desc::before {
+    content: '↓'; /* Unicode character for downward arrow */
+}
+
+.sort-arrow.inactive::before {
+    content: '';
+}
+
+
 /* Base style for Tactician images in the table */
 td img {
     transition: transform 0.3s ease; /* Smooth transition for scaling */
