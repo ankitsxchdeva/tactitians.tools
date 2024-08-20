@@ -2,8 +2,10 @@ import time
 import requests
 import psycopg2
 from psycopg2 import sql
+from psycopg2.extras import execute_values  # Ensure this is imported
 from dotenv import load_dotenv
 import os
+import signal
 
 # Load environment variables from .env file
 load_dotenv()
@@ -20,33 +22,46 @@ db_config = {
 # Riot Games API Key
 API_KEY = os.getenv('RIOT_API_KEY')
 
+# Signal handler for graceful cancellation
+stop_processing = False
+
+def signal_handler(sig, frame):
+    global stop_processing
+    print("Received signal to stop processing.")
+    stop_processing = True
+
+signal.signal(signal.SIGINT, signal_handler)
+
 def get_db_connection():
     attempt = 0
     while attempt < 5:  # Try to connect up to 5 times
         try:
             conn = psycopg2.connect(**db_config)
             return conn
-        except OperationalError as e:
+        except psycopg2.OperationalError as e:
             attempt += 1
             print(f"Attempt {attempt}: Could not connect to the database. Retrying in 5 seconds...")
             time.sleep(5)
-    raise OperationalError("Could not connect to the database after several attempts.")
+    raise psycopg2.OperationalError("Could not connect to the database after several attempts.")
 
 # Insert match data into the database
-def insert_match_data(match_id, content_id, puuid, placement):
+def insert_match_data_batch(match_data_batch):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     query = sql.SQL("""
         INSERT INTO match_data (match_id, content_id, puuid, placement)
-        VALUES (%s, %s, %s, %s)
+        VALUES %s
         ON CONFLICT (match_id, content_id, puuid) DO NOTHING;
     """)
 
-    cursor.execute(query, (match_id, content_id, puuid, placement))
+    execute_values(cursor, query, match_data_batch)  # Use the imported execute_values function
     conn.commit()
     cursor.close()
     conn.close()
+
+# The rest of your script...
+
 
 # Function to fetch match data
 def fetch_match_data(match_id):
@@ -60,20 +75,21 @@ def fetch_match_data(match_id):
         print(f"Match {match_id} is not a TFT match.")
         return None
     elif response.status_code == 429:
-        print("Rate limit exceeded, waiting for 1 second...")
-        time.sleep(1)
+        print("Rate limit exceeded, waiting for 3 seconds...")
+        time.sleep(3)
         return fetch_match_data(match_id)
     else:
         print(f"Error fetching match {match_id}: {response.status_code}")
         return None
 
 # Main function to iterate through match IDs and gather data
-def gather_match_data(start_id, end_id, max_games=140):
+def gather_match_data(start_id, end_id, max_games=140, batch_size=20):
     games_processed = 0
     last_processed_match_id = None
+    match_data_batch = []
 
     for match_id_num in range(start_id, end_id + 1):
-        if games_processed >= max_games:
+        if stop_processing or games_processed >= max_games:
             break
 
         match_id = f"NA1_{match_id_num}"
@@ -84,23 +100,31 @@ def gather_match_data(start_id, end_id, max_games=140):
         if match_data:
             participants = match_data['info']['participants']
 
+            # Skip the game if any participant has a PUUID containing BOT
+            if any("BOT" in participant['puuid'] for participant in participants):
+                print(f"Skipping match {match_id} due to BOT participant.")
+                continue
+
             for participant in participants:
                 content_id = participant['companion']['content_ID']
                 puuid = participant['puuid']
                 placement = participant['placement']
-                insert_match_data(match_id, content_id, puuid, placement)
+                match_data_batch.append((match_id, content_id, puuid, placement))
+
+            if len(match_data_batch) >= batch_size:
+                insert_match_data_batch(match_data_batch)
+                match_data_batch.clear()
 
             games_processed += 1
             last_processed_match_id = match_id
+
+    if match_data_batch:
+        insert_match_data_batch(match_data_batch)
 
     if last_processed_match_id:
         print(f"Stopped after {games_processed} games. Last processed match ID: {last_processed_match_id}")
 
 if __name__ == "__main__":
-    start_match_id = 5069919925
+    start_match_id = 5069920687
     end_match_id = 5089788886
-
     gather_match_data(start_match_id, end_match_id)
-
-# Stopped after 140 games. Last processed match ID: NA1_5069920687#
-
