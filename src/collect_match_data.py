@@ -161,7 +161,7 @@ def gather_match_data(start_id, end_id, batch_size=140, sub_batch_size=20):
     print("Data collection completed or stopped.")
 
 if __name__ == "__main__":
-    start_match_id = 5069924376
+    start_match_id = 5069925578
     end_match_id = 5089788886
 
     gather_match_data(start_match_id, end_match_id)
