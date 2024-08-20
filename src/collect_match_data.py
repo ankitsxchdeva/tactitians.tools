@@ -157,7 +157,7 @@ def gather_match_data(start_id, end_id, max_games=140, batch_size=20):
     update_companion_statistics()
 
 if __name__ == "__main__":
-    start_match_id = 5069922235
+    start_match_id = 5069923088
     end_match_id = 5089788886
 
     gather_match_data(start_match_id, end_match_id)
