@@ -131,7 +131,6 @@ tbody tr:last-child td {
     content: '';
 }
 
-
 /* Base style for Tactician images in the table */
 td img {
     transition: transform 0.3s ease; /* Smooth transition for scaling */
@@ -146,4 +145,33 @@ td:hover img {
     max-width: 100px; /* Increase the width on hover */
     height: auto; /* Adjust height to maintain aspect ratio */
     transform: scale(1.5); /* Optional: Smoothly scale the image slightly */
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px;
+    background-color: #333;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+footer .disclaimer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #bbb;
+    max-width: 800px;
+    margin: 10px auto;
+    padding: 0 20px;
 }

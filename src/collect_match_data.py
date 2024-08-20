@@ -2,7 +2,7 @@ import time
 import requests
 import psycopg2
 from psycopg2 import sql
-from psycopg2.extras import execute_values  # Ensure this is imported
+from psycopg2.extras import execute_values
 from dotenv import load_dotenv
 import os
 import signal
@@ -55,13 +55,10 @@ def insert_match_data_batch(match_data_batch):
         ON CONFLICT (match_id, content_id, puuid) DO NOTHING;
     """)
 
-    execute_values(cursor, query, match_data_batch)  # Use the imported execute_values function
+    execute_values(cursor, query, match_data_batch)
     conn.commit()
     cursor.close()
     conn.close()
-
-# The rest of your script...
-
 
 # Function to fetch match data
 def fetch_match_data(match_id):
@@ -75,12 +72,44 @@ def fetch_match_data(match_id):
         print(f"Match {match_id} is not a TFT match.")
         return None
     elif response.status_code == 429:
-        print("Rate limit exceeded, waiting for 3 seconds...")
-        time.sleep(3)
+        print("Rate limit exceeded, waiting for 1 second...")
+        time.sleep(1)
         return fetch_match_data(match_id)
     else:
         print(f"Error fetching match {match_id}: {response.status_code}")
         return None
+
+# Update companion_statistics table with new data from match_data
+def update_companion_statistics():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    update_query = """
+        INSERT INTO companion_statistics (companion_name, games_played, top_4_percentage, win_percentage, average_placement)
+        SELECT 
+            c.name AS companion_name,
+            COUNT(m.match_id) AS games_played,
+            100.0 * SUM(CASE WHEN m.placement <= 4 THEN 1 ELSE 0 END) / COUNT(m.match_id) AS top_4_percentage,
+            100.0 * SUM(CASE WHEN m.placement = 1 THEN 1 ELSE 0 END) / COUNT(m.match_id) AS win_percentage,
+            AVG(m.placement) AS average_placement
+        FROM 
+            companions c
+        JOIN 
+            match_data m ON c.content_id = m.content_id
+        GROUP BY 
+            c.name
+        ON CONFLICT (companion_name) DO UPDATE 
+        SET 
+            games_played = EXCLUDED.games_played,
+            top_4_percentage = EXCLUDED.top_4_percentage,
+            win_percentage = EXCLUDED.win_percentage,
+            average_placement = EXCLUDED.average_placement;
+    """
+
+    cursor.execute(update_query)
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 # Main function to iterate through match IDs and gather data
 def gather_match_data(start_id, end_id, max_games=140, batch_size=20):
@@ -124,7 +153,11 @@ def gather_match_data(start_id, end_id, max_games=140, batch_size=20):
     if last_processed_match_id:
         print(f"Stopped after {games_processed} games. Last processed match ID: {last_processed_match_id}")
 
+    # Update companion_statistics after collecting data
+    update_companion_statistics()
+
 if __name__ == "__main__":
-    start_match_id = 5069920687
+    start_match_id = 5069922235
     end_match_id = 5089788886
+
     gather_match_data(start_match_id, end_match_id)

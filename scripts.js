@@ -107,21 +107,31 @@ function sortTable(columnIndex) {
     const table = document.getElementById("tactician-table");
     const rows = Array.from(table.tBodies[0].rows);
 
-    const isNumericColumn = !isNaN(rows[0].cells[columnIndex].textContent.trim());
+    const isNumericColumn = !isNaN(rows[0].cells[columnIndex].textContent.replace('%', '').trim());
 
     let direction = table.getAttribute('data-sorted-direction') === 'asc' ? 'desc' : 'asc';
     rows.sort((a, b) => {
-        const aValue = parseFloat(a.cells[columnIndex].textContent.replace('%', '').trim());
-        const bValue = parseFloat(b.cells[columnIndex].textContent.replace('%', '').trim());
+        const aGamesPlayed = parseFloat(a.cells[2].textContent.trim());
+        const bGamesPlayed = parseFloat(b.cells[2].textContent.trim());
 
-        if (aValue === bValue) {
-            // Secondary sort by games played if the values are identical
-            const aGamesPlayed = parseFloat(a.cells[2].textContent.trim());
-            const bGamesPlayed = parseFloat(b.cells[2].textContent.trim());
-            return direction === 'asc' ? aGamesPlayed - bGamesPlayed : bGamesPlayed - aGamesPlayed;
+        // Handle sorting of companions with 0 games played
+        if (aGamesPlayed === 0 || bGamesPlayed === 0) {
+            if (aGamesPlayed === 0 && bGamesPlayed === 0) return 0;
+            return direction === 'asc' && columnIndex === 2 ? aGamesPlayed - bGamesPlayed : bGamesPlayed - aGamesPlayed;
         }
 
-        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+        const aValue = isNumericColumn ? parseFloat(a.cells[columnIndex].textContent.replace('%', '').trim()) : a.cells[columnIndex].textContent.trim();
+        const bValue = isNumericColumn ? parseFloat(b.cells[columnIndex].textContent.replace('%', '').trim()) : b.cells[columnIndex].textContent.trim();
+
+        if (aValue === bValue) {
+            // Secondary sort by games played if the values are identical and columnIndex isn't 2 (Games Played)
+            if (columnIndex !== 2) {
+                return direction === 'asc' ? aGamesPlayed - bGamesPlayed : bGamesPlayed - aGamesPlayed;
+            }
+            return 0;
+        }
+
+        return direction === 'asc' ? (aValue < bValue ? -1 : 1) : (aValue > bValue ? -1 : 1);
     });
 
     table.setAttribute('data-sorted-direction', direction);
@@ -150,3 +160,4 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelectorAll('#tactician-table th').forEach((header, index) => {
     header.addEventListener('click', () => sortTable(index));
 });
+
