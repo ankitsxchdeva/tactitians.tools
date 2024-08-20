@@ -9,6 +9,21 @@ This project is a massive waste of time. All it does it scrape through TFT games
 This repository contains both the front-end and back-end of the project. To setup the back-end for local development please see `src/config.md`
 
 ## File structure
+
+**Root Directory**
+```
+.gitignore
+CNAME
+index.html - homepage
+privacy_policy.html
+README.md - this page
+riot.txt
+scripts.js - javascript
+styles.css - stylesheet
+terms_of_service.html
+terms_of_service.css - stylesheet for terms_of_service.html and privacy_policy.html
+src/ - shown below
+```
 ```
 src/
 ├── templates/
@@ -22,23 +37,10 @@ src/
 ├── requirements.txt - python requirements
 └── schema.md - database schema layout
 ```
-**Root Directory**
-```
-.gitignore
-CNAME
-index.html - homepage
-privacy_policy.html
-README.md - this page
-riot.txt
-scripts.js - javascript
-styles.css - stylesheet
-terms_of_service.html
-terms_of_service.css - stylesheet for terms_of_service.html and privacy_policy.html
-```
 
 ## Contribution
 
-This project is not currently setup for collaborators. I hope to add this soon but currently it's a little bit too messy to have other people work on it. 
+This project is not currently in a state allowing collaborators. I hope to add this soon but currently it's a little bit too messy to have other people work on it. 
 
 ## Hosting
 
@@ -48,19 +50,11 @@ Front-end is hosted on GitHub pages as it is static, the database is hosted on A
 
 Bugs/errors:
 
-- Need to calculate games analyzed and last updated stats (maybe save this for later)
+- Need to calculate games analyzed and last updated stats
 
-- Need to do something to speed up time for the site to load, not sure what we are doing wrong here
+- Need to do something to speed up time for the site to load
 
-- Figure out fuzzy search for the entire table
-
-- Figure out sorting so that it doesn't include random tactitians with 0 play rate.
-
-API key request:
-
-- write a nice looking summary of the application
-
-- riot.txt thingy after that.
+- Figure out sorting so it doesn't include random tacticians with 0 play rate
 
 Next up to do:
 
@@ -68,43 +62,16 @@ Next up to do:
 
 - Fix the fuzzy search with some library
 
-- Figure out how the process will update for a new champion
-
-- Maybe write some sort of python thing that will let you add another little legend without much work
+- Design a process to update the code for any new companion
 
 Images:
 
-- Click to expand or something like that
+- Click to expand the images
 
-- Host locally and make the images webp or something that actually works
+- Host locally and make the images webp to improve speed
 
-- Fix the bug for Apprentice Sprite image not being there
+- Fix the bug for Apprentice Sprite image
 
 Meta project things to do:
 
-- Make a nice and readable readme
-
-- Maybe add contribution guidelines as well?
-
-- Not sure if I open source this but something like that could be cool I think
-
-- Apply for prod api code
-
-- Fix file structure and make it look really nice as well
-
-Frontend:
-
-- Hosted on github pages.
-- Static & basic html/js/css
-
-Backend:
-
-- Python & flask
-- Hosted on render 
-- Get list of tactitions from here: https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/companions.json
-- Get each game from somewhere else
-
-Database:
-
-- PostgreSQL
-- Hosted on AWS RDS(?)
+- add contribution guidelines lmfao
