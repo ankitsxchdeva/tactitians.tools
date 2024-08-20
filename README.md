@@ -9,7 +9,7 @@ This project is a massive waste of time. All it does it scrape through TFT games
 This repository contains both the front-end and back-end of the project. To setup the back-end for local development please see `src/config.md`
 
 ## File structure
-
+```
 src/
 ├── templates/
 │   └── **index.html** - landing page for the flask API
@@ -20,17 +20,19 @@ src/
 ├── **config.md** - instructions for setting up a development environment
 ├── **populate_companions.py** - script for pulling images and names of each little legend
 ├── **requirements.txt** - python requirements
-├── **schema.md** - database schema layout
-├── **.gitignore*
-├── **CNAME**
-├── **index.html** - homepage
-├── **privacy_policy.html**
-├── **README.md** - this page
-├── **riot.txt**
-├── **scripts.js** - javascript
-├── **styles.css** - stylesheet
-├── **terms_of_service.html**
-└── **terms_of_service.css** - stylesheet for terms_of_service.html and privacy_policy.html
+└── **schema.md** - database schema layout
+**Root Directory**
+**.gitignore*
+**CNAME**
+**index.html** - homepage
+**privacy_policy.html**
+**README.md** - this page
+**riot.txt**
+**scripts.js** - javascript
+**styles.css** - stylesheet
+**terms_of_service.html**
+**terms_of_service.css** - stylesheet for terms_of_service.html and privacy_policy.html
+```
 
 ## Contribution
 
