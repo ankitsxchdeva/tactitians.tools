@@ -51,6 +51,33 @@ body {
     cursor: not-allowed;
 }
 
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #1C1F26;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.search-bar label {
+    margin-right: 10px;
+    align-self: center;
+    font-weight: bold;
+}
+
+.search-bar input {
+    padding: 5px 10px;
+    background-color: #27303B;
+    color: #E1E8ED;
+    border: 1px solid #27303B;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    width: 250px;
+}
+
+
 table {
     width: 80%;
     max-width: 1200px;

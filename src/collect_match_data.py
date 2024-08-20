@@ -111,53 +111,57 @@ def update_companion_statistics():
     cursor.close()
     conn.close()
 
-# Main function to iterate through match IDs and gather data
-def gather_match_data(start_id, end_id, max_games=140, batch_size=20):
-    games_processed = 0
-    last_processed_match_id = None
-    match_data_batch = []
+# Main function to iterate through match IDs and gather data in batches
+def gather_match_data(start_id, end_id, batch_size=140, sub_batch_size=20):
+    while start_id <= end_id and not stop_processing:
+        print(f"Starting batch with start ID: {start_id}")
+        games_processed = 0
+        match_data_batch = []
 
-    for match_id_num in range(start_id, end_id + 1):
-        if stop_processing or games_processed >= max_games:
-            break
+        for match_id_num in range(start_id, end_id + 1):
+            if stop_processing or games_processed >= batch_size:
+                break
 
-        match_id = f"NA1_{match_id_num}"
-        print(f"Fetching data for match {match_id}...")
+            match_id = f"NA1_{match_id_num}"
+            print(f"Fetching data for match {match_id}...")
 
-        match_data = fetch_match_data(match_id)
+            match_data = fetch_match_data(match_id)
 
-        if match_data:
-            participants = match_data['info']['participants']
+            if match_data:
+                participants = match_data['info']['participants']
 
-            # Skip the game if any participant has a PUUID containing BOT
-            if any("BOT" in participant['puuid'] for participant in participants):
-                print(f"Skipping match {match_id} due to BOT participant.")
-                continue
+                # Skip the game if any participant has a PUUID containing BOT
+                if any("BOT" in participant['puuid'] for participant in participants):
+                    print(f"Skipping match {match_id} due to BOT participant.")
+                    continue
 
-            for participant in participants:
-                content_id = participant['companion']['content_ID']
-                puuid = participant['puuid']
-                placement = participant['placement']
-                match_data_batch.append((match_id, content_id, puuid, placement))
+                for participant in participants:
+                    content_id = participant['companion']['content_ID']
+                    puuid = participant['puuid']
+                    placement = participant['placement']
+                    match_data_batch.append((match_id, content_id, puuid, placement))
 
-            if len(match_data_batch) >= batch_size:
-                insert_match_data_batch(match_data_batch)
-                match_data_batch.clear()
+                if len(match_data_batch) >= sub_batch_size:
+                    insert_match_data_batch(match_data_batch)
+                    match_data_batch.clear()
 
-            games_processed += 1
-            last_processed_match_id = match_id
+                games_processed += 1
 
-    if match_data_batch:
-        insert_match_data_batch(match_data_batch)
+        if match_data_batch:
+            insert_match_data_batch(match_data_batch)
 
-    if last_processed_match_id:
-        print(f"Stopped after {games_processed} games. Last processed match ID: {last_processed_match_id}")
+        print(f"Finished batch. Processed {games_processed} games.")
 
-    # Update companion_statistics after collecting data
-    update_companion_statistics()
+        # Update start_id for the next batch
+        start_id += batch_size
+
+        # Update companion_statistics after each batch
+        update_companion_statistics()
+
+    print("Data collection completed or stopped.")
 
 if __name__ == "__main__":
-    start_match_id = 5069923088
+    start_match_id = 5069923864
     end_match_id = 5089788886
 
     gather_match_data(start_match_id, end_match_id)

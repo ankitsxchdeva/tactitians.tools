@@ -161,3 +161,25 @@ document.querySelectorAll('#tactician-table th').forEach((header, index) => {
     header.addEventListener('click', () => sortTable(index));
 });
 
+// Function to perform fuzzy search
+function fuzzySearch(query, items) {
+    const lowerQuery = query.toLowerCase();
+    return items.filter(item => {
+        return item.name.toLowerCase().includes(lowerQuery);
+    });
+}
+
+// Event listener for the search input
+document.getElementById('champion-search').addEventListener('input', function () {
+    const query = this.value;
+    Promise.all([fetchAndDisplayCompanions(), fetchAndDisplayCompanionStats()])
+        .then(([companions, stats]) => {
+            let mergedData = mergeCompanionData(companions, stats);
+            if (query) {
+                mergedData = fuzzySearch(query, mergedData);
+            }
+            renderTable(mergedData);
+        });
+});
+
+
