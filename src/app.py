@@ -51,7 +51,7 @@ def get_companion_stats():
     cursor = conn.cursor()
 
     query = """
-    SELECT companion_name, games_played, top_4_percentage, win_percentage
+    SELECT companion_name, games_played, top_4_percentage, win_percentage, average_placement
     FROM companion_statistics
     ORDER BY top_4_percentage DESC;
     """
@@ -66,7 +66,8 @@ def get_companion_stats():
             'companion_name': row[0],
             'games_played': row[1],
             'top_4_percentage': row[2],
-            'win_percentage': row[3]
+            'win_percentage': row[3],
+            'average_placement': row[4]
         } for row in rows
     ]
 

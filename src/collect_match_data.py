@@ -102,5 +102,5 @@ if __name__ == "__main__":
 
     gather_match_data(start_match_id, end_match_id)
 
-## Stopped after 140 games. Last processed match ID: NA1_5069920687
+# Stopped after 140 games. Last processed match ID: NA1_5069920687#
 
