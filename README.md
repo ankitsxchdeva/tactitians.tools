@@ -12,15 +12,16 @@ This repository contains both the front-end and back-end of the project. To setu
 ```
 src/
 ├── templates/
-│   └── **index.html** - landing page for the flask API
-├── **venv/**
-├── **.env***
-├── **app.py** - flask API that pulls from the database 
-├── **collect_match_data.py** - script for pulling from the Riot games API (match endpoint)
-├── **config.md** - instructions for setting up a development environment
-├── **populate_companions.py** - script for pulling images and names of each little legend
-├── **requirements.txt** - python requirements
-└── **schema.md** - database schema layout
+│   └── index.html - landing page for the flask API
+├── venv/
+├── .env*
+├── app.py - flask API that pulls from the database 
+├── collect_match_data.py - script for pulling from the Riot games API (match endpoint)
+├── config.md - instructions for setting up a development environment
+├── populate_companions.py - script for pulling images and names of each little legend
+├── requirements.txt - python requirements
+└── schema.md - database schema layout
+```
 **Root Directory**
 **.gitignore*
 **CNAME**
@@ -32,7 +33,6 @@ src/
 **styles.css** - stylesheet
 **terms_of_service.html**
 **terms_of_service.css** - stylesheet for terms_of_service.html and privacy_policy.html
-```
 
 ## Contribution
 
