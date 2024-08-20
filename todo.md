@@ -10,3 +10,19 @@ API key request:
 
 Next up to do:
 - Setup some sort of chron job to automatically runs the match data api
+- Fix the fuzzy search with some library
+- Figure out how the process will update for a new champion
+    - Maybe write some sort of python thing that will let you add another little legend without much work 
+    
+
+Images:
+- Click to expand or something like that
+- Host locally and make the images webp or something that actually works
+- Fix the bug for Apprentice Sprite image not being there
+
+Meta project things to do:
+- Make a nice and readable readme
+- Maybe add contribution guidelines as well?
+- Not sure if I open source this but something like that could be cool I think
+- Apply for prod api code 
+- Fix file structure and make it look really nice as well 
